@@ -8,6 +8,7 @@ from utils.localization import get_text
 
 router = Router()
 
+
 @router.message(Command("ally"))
 async def cmd_ally(message: types.Message):
     user_id = message.from_user.id
@@ -25,6 +26,7 @@ async def cmd_ally(message: types.Message):
 
     caption = get_text(user_id, "ally_title")
     await message.answer_photo(photo=ally_url, caption=caption)
+
 
 @router.message(Command("top"))
 async def cmd_top(message: types.Message):

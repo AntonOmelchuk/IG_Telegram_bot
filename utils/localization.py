@@ -60,6 +60,7 @@ TEXTS = {
         "no_top_data": "🏆 База даних гравців порожня.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "menu_events": "📅 Евенти",
+        "menu_ally": "🤝 Альянс",
         "menu_top": "🏆 Топ PvP",
         "menu_tz": "⏰ Часовий пояс",
         "menu_help": "ℹ️ Довідка",
@@ -69,7 +70,12 @@ TEXTS = {
                     "🌎 /timezone — Налаштувати свій часовий пояс (UTC / локальний час)\n"
                     "🏆 /top — Топ 10 гравців за PvP\n"
                     "🌐 /language — Змінити мову інтерфейсу\n"
-                    "❓ /help — Ця довідка"
+                    "❓ /help — Ця довідка",
+        "no_active_reminders": "🔔 У вас немає активних нагадувань.",
+        "active_reminders_header": "🔔 **Ваші активні нагадування:**",
+        "top_pvp_header": "🏆 **Топ гравців PvP:**",
+        "loading_top": "⏳ Завантаження топу...",
+        "no_data": "❌ Дані відсутні."
     },
     "en": {
         "welcome": "Welcome, **{name}**! I am the **Iron Gates** Manager.\nUse /help see all commands.",
@@ -103,6 +109,7 @@ TEXTS = {
         "no_top_data": "🏆 Player database is empty.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "menu_events": "📅 Events",
+        "menu_ally": "🤝 Alliance",
         "menu_top": "🏆 Top PvP",
         "menu_tz": "⏰ Timezone",
         "menu_help": "ℹ️ Help",
@@ -112,7 +119,12 @@ TEXTS = {
                     "🌎 /timezone — Set your local timezone (UTC / local offset)\n"
                     "🏆 /top — Top 10 PvP Leaderboard\n"
                     "🌐 /language — Switch language\n"
-                    "❓ /help — Show this help message"
+                    "❓ /help — Show this help message",
+        "no_active_reminders": "🔔 You have no active reminders.",
+        "active_reminders_header": "🔔 **Your active reminders:**",
+        "top_pvp_header": "🏆 **Top PvP Players:**",
+        "loading_top": "⏳ Loading top...",
+        "no_data": "❌ No data available.",
     }
 }
 

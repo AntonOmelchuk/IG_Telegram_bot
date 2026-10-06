@@ -7,7 +7,7 @@ from firebase_admin import db
 from config import USERS_PATH
 from utils.localization import get_text, get_main_reply_keyboard
 from handlers.events import cmd_events
-from handlers.clan import cmd_top
+from handlers.clan import cmd_top, cmd_ally
 
 
 router = Router()
@@ -35,10 +35,9 @@ async def menu_top_trigger(message: types.Message):
     await cmd_top(message)
 
 
-@router.message(F.text.in_({"⏰ Часовий пояс", "⏰ Timezone"}))
+@router.message(F.text.in_({"🤝 Альянс", "🤝 Alliance"}))
 async def menu_tz_trigger(message: types.Message):
-    from handlers.common import cmd_timezone
-    await cmd_timezone(message)
+    await cmd_ally(message)
 
 
 @router.message(F.text.in_({"ℹ️ Довідка", "ℹ️ Help"}))
