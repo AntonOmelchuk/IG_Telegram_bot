@@ -125,13 +125,14 @@ async def process_reminder_time(callback: types.CallbackQuery):
 
     title = event_data.get("title") or event_data.get("name") or event_id
     start_time_str = event_dt_user.strftime("%d.%m %H:%M")
+    event_type = event_data.get("type")
 
     job_id = f"remind_{user_id}_{event_id}_{minutes}"
     scheduler.add_job(
         send_reminder_notification,
         trigger="date",
         run_date=remind_at,
-        args=[user_id, title, minutes, start_time_str],
+        args=[user_id, title, minutes, start_time_str, event_type],
         id=job_id,
         replace_existing=True
     )

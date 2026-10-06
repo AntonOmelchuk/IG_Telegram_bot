@@ -29,21 +29,21 @@ def get_user_tz(user_id: int):
 
 TEXTS = {
     "uk": {
-        "welcome": "Вітаємо, **{name}**! Я Менеджер **Iron Gates**.\nНатисни /help щоб побачити список всіх команд.",
+        "welcome": "Вітаємо, *{name}*! Я Менеджер *Iron Gates*.\nНатисни /help щоб побачити список всіх команд.",
         "select_lang": "Оберіть мову / Select language:",
         "lang_changed": "✅ Мову успішно змінено на Українську!",
         "no_events": "📅 Наразі немає запланованих евентів.",
-        "events_header": "🛡️ **Найближчі евенти:**\n\n",
+        "events_header": "🛡️ *Найближчі евенти:*\n\n",
         "btn_remind": "🔔 Нагадати: {title}",
-        "choose_time": "⏰ Оберіть, за скільки часу до початку **{title}** надіслати нагадування:",
+        "choose_time": "⏰ Оберіть, за скільки часу до початку *{title}* надіслати нагадування:",
         "time_options": {"5": "⏱️ 5 хв", "15": "⏱️ 15 хв", "30": "⏱️ 30 хв", "60": "⏱️ 1 годину"},
-        "reminder_set": "✅ Нагадування встановлено! Я надішлю повідомлення про **{title}** за **{time}**.",
+        "reminder_set": "✅ Нагадування встановлено! Я надішлю повідомлення про *{title}* за *{time}*.",
         "time_passed": "❌ Цей час нагадування вже минув!",
-        "reminder_msg": "🔔 **НАГАДУВАННЯ!**\nЕвент **{title}** розпочнеться через **{time}**!\n⏰ Час старту: `{start_time}`",
+        "reminder_msg": "🔔 *НАГАДУВАННЯ!*\n{emoji} *{title}* розпочнеться через *{time}*!\n⏰ Час старту: `{start_time}`",
         "no_ally_image": "❌ Зображення альянсу відсутнє в базі даних.",
         "ally_title": "🛡️ Склад Альянсу",
         "tz_title": (
-            "⏰ **Налаштування часового поясу**\n\n"
+            "⏰ *Налаштування часового поясу*\n\n"
             "Оберіть свій регіон з кнопок нижче або просто напишіть у чат ваше зміщення від UTC.\n\n"
             "Приклади для вводу:\n"
             "• `+7` або `7` (В'єтнам / Таїланд)\n"
@@ -51,7 +51,8 @@ TEXTS = {
             "• `+2` або `+3` (Європа)\n"
             "• Назва IANA-зони: `America/Sao_Paulo`, `Asia/Ho_Chi_Minh`"
         ),
-        "tz_set_success": "✅ Ваш часовий пояс успішно встановлено: **{tz}**\nТепер час евентів у команді `/events` буде відображатися за вашим місцевим часом!",
+        "lang_set_success": "✅ Мову успішно змінено на *Українську*! 🇺🇦\nТепер усі повідомлення та події будуть відображатися цією мовою.",
+        "tz_set_success": "✅ Ваш часовий пояс успішно встановлено: *{tz}*\nТепер час евентів у команді `/events` буде відображатися за вашим місцевим часом!",
         "tz_btn_br": "🇧🇷 Бразилія (UTC-3)",
         "tz_btn_ua": "🇺🇦 Україна (UTC+2/+3)",
         "tz_btn_eu": "🇵🇱 Польща / ЄС (UTC+1/+2)",
@@ -65,37 +66,37 @@ TEXTS = {
         "menu_top": "🏆 Топ PvP",
         "menu_tz": "⏰ Часовий пояс",
         "menu_help": "ℹ️ Довідка",
-        "help_text": "📖 **Інструкція з команд:**\n\n"
+        "help_text": "📖 *Інструкція з команд:*\n\n"
                     "🛡️ /events — Найближчі евенти та підписка на нагадування\n"
-                    "🤝 /ally — Картинка складу альянсу\n"
+                    "🤝 /ally — Зображення зі складом альянсу\n"
                     "🌎 /timezone — Налаштувати свій часовий пояс (UTC / локальний час)\n"
                     "🔔 /reminders - Переглянути активні нагадування\n"
                     "🏆 /top — Топ 10 гравців за PvP\n"
                     "🌐 /language — Змінити мову інтерфейсу\n"
                     "❓ /help — Ця довідка",
         "no_active_reminders": "🔔 У вас немає активних нагадувань.",
-        "active_reminders_header": "🔔 **Ваші активні нагадування:**",
-        "reminder_item": "• **{title}** (початок: `{start_time}`)\n  └ ⏰ Нагадування за {minutes} хв (`{remind_time}`)",
-        "top_pvp_header": "🏆 **Топ гравців PvP:**",
+        "active_reminders_header": "🔔 *Ваші активні нагадування:*",
+        "reminder_item": "• *{title}* (початок: `{start_time}`)\n  └ ⏰ Нагадування за {minutes} хв (`{remind_time}`)",
+        "top_pvp_header": "🏆 *Топ гравців PvP:*",
         "loading_top": "⏳ Завантаження топу...",
         "no_data": "❌ Дані відсутні."
     },
     "en": {
-        "welcome": "Welcome, **{name}**! I am the **Iron Gates** Manager.\nUse /help see all commands.",
+        "welcome": "Welcome, *{name}*! I am the *Iron Gates* Manager.\nUse /help see all commands.",
         "select_lang": "Select language / Оберіть мову:",
         "lang_changed": "✅ Language successfully changed to English!",
         "no_events": "📅 No upcoming events scheduled at the moment.",
-        "events_header": "🛡️ **Upcoming Events:**\n\n",
+        "events_header": "🛡️ *Upcoming Events:*\n\n",
         "btn_remind": "🔔 Remind: {title}",
-        "choose_time": "⏰ Choose how long before **{title}** to send a reminder:",
+        "choose_time": "⏰ Choose how long before *{title}* to send a reminder:",
         "time_options": {"5": "⏱️ 5m", "15": "⏱️ 15m", "30": "⏱️ 30m", "60": "⏱️ 1 hour"},
-        "reminder_set": "✅ Reminder set! I will send a message for **{title}** **{time}** before start.",
+        "reminder_set": "✅ Reminder set! I will send a message for *{title}* *{time}* before start.",
         "time_passed": "❌ This reminder time has already passed!",
-        "reminder_msg": "🔔 **REMINDER!**\nEvent **{title}** starts in **{time}**!\n⏰ Start time: `{start_time}`",
+        "reminder_msg": "🔔 *REMINDER!*\n{emoji} *{title}* starts in *{time}*!\n⏰ Start time: `{start_time}`",
         "no_ally_image": "❌ Alliance image is missing in database.",
         "ally_title": "🛡️ Alliance Clan Roster",
         "tz_title": (
-            "⏰ **Timezone Settings**\n\n"
+            "⏰ *Timezone Settings*\n\n"
             "Choose your region from the buttons below or simply type your UTC offset in chat.\n\n"
             "Input examples:\n"
             "• `+7` or `7` (Vietnam / Thailand)\n"
@@ -103,7 +104,8 @@ TEXTS = {
             "• `+2` or `+3` (Europe)\n"
             "• IANA zone name: `America/Sao_Paulo`, `Asia/Ho_Chi_Minh`"
         ),
-        "tz_set_success": "✅ Your timezone has been set to: **{tz}**\nNow event times in `/events` will be displayed in your local time!",
+        "lang_set_success": "✅ Language successfully set to **English**! 🇬🇧\nAll messages and events will now be displayed in this language.",
+        "tz_set_success": "✅ Your timezone has been set to: *{tz}*\nNow event times in `/events` will be displayed in your local time!",
         "tz_btn_br": "🇧🇷 Brazil (UTC-3)",
         "tz_btn_ua": "🇺🇦 Ukraine (UTC+2/+3)",
         "tz_btn_eu": "🇵🇱 Poland / EU (UTC+1/+2)",
@@ -117,7 +119,7 @@ TEXTS = {
         "menu_top": "🏆 Top PvP",
         "menu_tz": "⏰ Timezone",
         "menu_help": "ℹ️ Help",
-        "help_text": "📖 **Command Guide:**\n\n"
+        "help_text": "📖 *Command Guide:*\n\n"
                     "🛡 /events — Upcoming events and reminder subscriptions\n"
                     "🤝 /ally — Alliance clan roster image\n"
                     "🌎 /timezone — Set your local timezone (UTC / local offset)\n"
@@ -126,13 +128,14 @@ TEXTS = {
                     "🌐 /language — Switch language\n"
                     "❓ /help — Show this help message",
         "no_active_reminders": "🔔 You have no active reminders.",
-        "active_reminders_header": "🔔 **Your active reminders:**",
-        "reminder_item": "• **{title}** (starts at: `{start_time}`)\n  └ ⏰ Reminder {minutes}m before (`{remind_time}`)",
-        "top_pvp_header": "🏆 **Top PvP Players:**",
+        "active_reminders_header": "🔔 *Your active reminders:*",
+        "reminder_item": "• *{title}* (starts at: `{start_time}`)\n  └ ⏰ Reminder {minutes}m before (`{remind_time}`)",
+        "top_pvp_header": "🏆 *Top PvP Players:*",
         "loading_top": "⏳ Loading top...",
         "no_data": "❌ No data available.",
     }
 }
+
 
 def get_user_lang(user_id: int, fallback_code: str = "uk") -> str:
     lang = db.reference(f"{USERS_PATH}/{user_id}/language").get()
@@ -140,10 +143,12 @@ def get_user_lang(user_id: int, fallback_code: str = "uk") -> str:
         lang = "uk" if fallback_code and "uk" in fallback_code.lower() else "en"
     return lang if lang in TEXTS else "uk"
 
+
 def get_text(user_id: int, key: str, fallback_code: str = "uk", **kwargs) -> str:
     lang = get_user_lang(user_id, fallback_code)
     template = TEXTS[lang].get(key, TEXTS["uk"].get(key, ""))
     return template.format(**kwargs) if kwargs else template
+
 
 def get_event_emoji(title: str = "", event_type: str = "") -> str:
     text = f"{title} {event_type}".lower()

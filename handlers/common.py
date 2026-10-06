@@ -65,13 +65,16 @@ async def cmd_language(message: types.Message):
 
 
 @router.callback_query(F.data.startswith("setlang_"))
-async def process_lang_switch(callback: types.CallbackQuery):
-    lang_code = callback.data.split("_")[1]
+async def process_lang_callback(callback: types.CallbackQuery):
+    lang_code = callback.data.split("setlang_")[1]
     user_id = callback.from_user.id
+
     db.reference(f"{USERS_PATH}/{user_id}/language").set(lang_code)
 
-    confirm_text = TEXTS[lang_code]["lang_changed"]
-    await callback.message.edit_text(confirm_text)
+    success_text = get_text(user_id, "lang_set_success", lang_code)
+
+    await callback.message.edit_text(success_text, parse_mode=ParseMode.MARKDOWN)
+    await callback.answer()
 
 
 @router.message(Command("help"))
