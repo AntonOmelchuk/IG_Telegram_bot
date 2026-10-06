@@ -7,7 +7,7 @@ from firebase_admin import db
 from config import USERS_PATH
 from utils.localization import get_text, get_main_reply_keyboard
 from handlers.events import cmd_events
-from handlers.top import cmd_top
+from handlers.clan import cmd_top
 
 
 router = Router()
