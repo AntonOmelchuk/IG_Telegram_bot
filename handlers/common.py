@@ -4,17 +4,35 @@ from aiogram.filters import Command
 from aiogram.enums import ParseMode
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from firebase_admin import db
-from config import USERS_PATH
-from utils.localization import get_user_lang, get_text, TEXTS
 
+from config import USERS_PATH
+from utils.localization import get_text, TEXTS, get_main_reply_keyboard
+from handlers.events import cmd_events
+from handlers.top import cmd_top
 
 router = Router()
 
 
 @router.message(Command("start"))
 async def cmd_start(message: types.Message):
-    text = get_text(message.from_user.id, "welcome", message.from_user.language_code, name=message.from_user.first_name)
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
+    user_id = message.from_user.id
+    user_code = message.from_user.language_code
+
+    text = get_text(user_id, "welcome", user_code, name=message.from_user.first_name)
+    keyboard = get_main_reply_keyboard(user_id, user_code)
+
+    await message.answer(text, reply_markup=keyboard, parse_mode=ParseMode.MARKDOWN)
+
+
+@router.message(Command("help"))
+async def cmd_help(message: types.Message):
+    user_id = message.from_user.id
+    user_code = message.from_user.language_code
+
+    text = get_text(user_id, "help_text", user_code)
+    keyboard = get_main_reply_keyboard(user_id, user_code)
+
+    await message.answer(text, reply_markup=keyboard, parse_mode=ParseMode.MARKDOWN)
 
 
 @router.message(Command("language"))
@@ -37,12 +55,6 @@ async def process_lang_switch(callback: types.CallbackQuery):
 
     confirm_text = TEXTS[lang_code]["lang_changed"]
     await callback.message.edit_text(confirm_text)
-
-
-@router.message(Command("help"))
-async def cmd_help(message: types.Message):
-    text = get_text(message.from_user.id, "help_text", message.from_user.language_code)
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
 
 
 @router.message(Command("timezone"))
@@ -74,12 +86,31 @@ async def process_tz_callback(callback: types.CallbackQuery):
     await callback.message.edit_text(success_text, parse_mode=ParseMode.MARKDOWN)
 
 
+@router.message(F.text.in_({"📅 Евенти", "📅 Events"}))
+async def menu_events_trigger(message: types.Message):
+    await cmd_events(message)
+
+
+@router.message(F.text.in_({"🏆 Топ PvP", "🏆 Top PvP"}))
+async def menu_top_trigger(message: types.Message):
+    await cmd_top(message)
+
+
+@router.message(F.text.in_({"⏰ Часовий пояс", "⏰ Timezone"}))
+async def menu_tz_trigger(message: types.Message):
+    await cmd_timezone(message)
+
+
+@router.message(F.text.in_({"ℹ️ Довідка", "ℹ️ Help"}))
+async def menu_help_trigger(message: types.Message):
+    await cmd_help(message)
+
+
 @router.message(F.text & ~F.text.startswith("/"))
 async def process_tz_text_input(message: types.Message):
     text = message.text.strip()
     user_id = message.from_user.id
     user_code = message.from_user.language_code
-
 
     match = re.match(r"^([+-]?\d{1,2}(\.\d)?)$", text)
 

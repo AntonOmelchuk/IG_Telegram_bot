@@ -1,5 +1,6 @@
 from firebase_admin import db
 from config import USERS_PATH, EVENT_EMOJIS
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from datetime import timezone, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -172,8 +173,6 @@ def get_user_tz(user_id: int):
         print(f"[DEBUG] Zone '{tz_str}' not found, fallback to {DEFAULT_TIMEZONE}", flush=True)
         return ZoneInfo(DEFAULT_TIMEZONE)
 
-
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def get_main_reply_keyboard(user_id: int, user_code: str = None) -> ReplyKeyboardMarkup:
 
