@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.enums import ParseMode
