@@ -14,7 +14,6 @@ from handlers.reminders import cmd_reminders
 router = Router()
 
 
-@router.message(Command("start"))
 @router.message(Command("help"))
 async def cmd_start_or_help(message: types.Message):
     user_id = message.from_user.id
