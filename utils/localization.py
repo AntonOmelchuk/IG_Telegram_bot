@@ -61,6 +61,7 @@ TEXTS = {
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "menu_events": "📅 Евенти",
         "menu_ally": "🤝 Альянс",
+        "menu_reminders": "🔔 Нагадування",
         "menu_top": "🏆 Топ PvP",
         "menu_tz": "⏰ Часовий пояс",
         "menu_help": "ℹ️ Довідка",
@@ -74,6 +75,7 @@ TEXTS = {
                     "❓ /help — Ця довідка",
         "no_active_reminders": "🔔 У вас немає активних нагадувань.",
         "active_reminders_header": "🔔 **Ваші активні нагадування:**",
+        "reminder_item": "• **{title}** (початок: `{start_time}`)\n  └ ⏰ Нагадування за {minutes} хв (`{remind_time}`)",
         "top_pvp_header": "🏆 **Топ гравців PvP:**",
         "loading_top": "⏳ Завантаження топу...",
         "no_data": "❌ Дані відсутні."
@@ -111,6 +113,7 @@ TEXTS = {
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "menu_events": "📅 Events",
         "menu_ally": "🤝 Alliance",
+        "menu_reminders": "🔔 Reminders",
         "menu_top": "🏆 Top PvP",
         "menu_tz": "⏰ Timezone",
         "menu_help": "ℹ️ Help",
@@ -124,6 +127,7 @@ TEXTS = {
                     "❓ /help — Show this help message",
         "no_active_reminders": "🔔 You have no active reminders.",
         "active_reminders_header": "🔔 **Your active reminders:**",
+        "reminder_item": "• **{title}** (starts at: `{start_time}`)\n  └ ⏰ Reminder {minutes}m before (`{remind_time}`)",
         "top_pvp_header": "🏆 **Top PvP Players:**",
         "loading_top": "⏳ Loading top...",
         "no_data": "❌ No data available.",
@@ -188,7 +192,7 @@ def get_main_reply_keyboard(user_id: int, user_code: str = None) -> ReplyKeyboar
         keyboard=[
             [
                 KeyboardButton(text=get_text(user_id, "menu_events", user_code)),
-                KeyboardButton(text=get_text(user_id, "menu_top", user_code))
+                KeyboardButton(text=get_text(user_id, "menu_reminders", user_code))
             ],
             [
                 KeyboardButton(text=get_text(user_id, "menu_ally", user_code)),

@@ -8,6 +8,7 @@ from config import USERS_PATH
 from utils.localization import get_text, get_main_reply_keyboard
 from handlers.events import cmd_events
 from handlers.clan import cmd_top, cmd_ally
+from handlers.reminders import cmd_reminders
 
 
 router = Router()
@@ -30,9 +31,9 @@ async def menu_events_trigger(message: types.Message):
     await cmd_events(message)
 
 
-@router.message(F.text.in_({"🏆 Топ PvP", "🏆 Top PvP"}))
-async def menu_top_trigger(message: types.Message):
-    await cmd_top(message)
+@router.message(F.text.in_({"🔔 Нагадування", "🔔 Reminders"}))
+async def menu_reminders_trigger(message: types.Message):
+    await cmd_reminders(message)
 
 
 @router.message(F.text.in_({"🤝 Альянс", "🤝 Alliance"}))

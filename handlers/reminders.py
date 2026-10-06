@@ -30,10 +30,17 @@ async def cmd_reminders(message: types.Message):
 
     for job in user_jobs:
         _, title, minutes, start_time_str = job.args
-
         remind_time_str = job.next_run_time.strftime("%d.%m %H:%M") if job.next_run_time else "—"
 
-        text += f"• **{title}** (початок: `{start_time_str}`)\n"
-        text += f"  └ ⏰ Нагадування за {minutes} хв (`{remind_time_str}`)\n\n"
+        item_text = get_text(
+            user_id,
+            "reminder_item",
+            user_code,
+            title=title,
+            start_time=start_time_str,
+            minutes=minutes,
+            remind_time=remind_time_str
+        )
+        text += f"{item_text}\n\n"
 
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
+    await message.answer(text.strip(), parse_mode=ParseMode.MARKDOWN)
