@@ -4,10 +4,8 @@ from services.scheduler import scheduler
 from handlers import register_handlers
 
 async def main():
-    # Запускаємо розклад нагадувань
     scheduler.start()
 
-    # Реєструємо всі хендлери
     register_handlers(dp)
 
     print("🤖 Telegram Bot is running...")

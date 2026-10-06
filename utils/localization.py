@@ -34,7 +34,7 @@ def get_user_tz(user_id: int):
 
 TEXTS = {
     "uk": {
-        "welcome": "Вітаємо, **{name}**! Я Менеджер **Iron Gates**.\nОбирай потрібну команду в меню або використовуй /help.",
+        "welcome": "Вітаємо, **{name}**! Я Менеджер **Iron Gates**.\nНатисни /help щоб побачити список всіх команд.",
         "select_lang": "Оберіть мову / Select language:",
         "lang_changed": "✅ Мову успішно змінено на Українську!",
         "no_events": "📅 Наразі немає запланованих евентів.",
@@ -67,12 +67,13 @@ TEXTS = {
         "help_text": "📖 **Інструкція з команд:**\n\n"
                     "🛡️ /events — Найближчі евенти та підписка на нагадування\n"
                     "🤝 /ally — Картинка складу альянсу\n"
+                    "🌎 /timezone — Налаштувати свій часовий пояс (UTC / локальний час)\n"
                     "🏆 /top — Топ 10 гравців за PvP\n"
                     "🌐 /language — Змінити мову інтерфейсу\n"
                     "❓ /help — Ця довідка"
     },
     "en": {
-        "welcome": "Welcome, **{name}**! I am the **Iron Gates** Manager.\nChoose a command below or use /help.",
+        "welcome": "Welcome, **{name}**! I am the **Iron Gates** Manager.\nUse /help see all commands.",
         "select_lang": "Select language / Оберіть мову:",
         "lang_changed": "✅ Language successfully changed to English!",
         "no_events": "📅 No upcoming events scheduled at the moment.",
@@ -105,6 +106,7 @@ TEXTS = {
         "help_text": "📖 **Command Guide:**\n\n"
                     "🛡 /events — Upcoming events and reminder subscriptions\n"
                     "🤝 /ally — Alliance clan roster image\n"
+                    "🌎 /timezone — Set your local timezone (UTC / local offset)\n"
                     "🏆 /top — Top 10 PvP Leaderboard\n"
                     "🌐 /language — Switch language\n"
                     "❓ /help — Show this help message"

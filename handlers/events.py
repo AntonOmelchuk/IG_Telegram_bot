@@ -11,6 +11,7 @@ from services.scheduler import scheduler, send_reminder_notification
 
 router = Router()
 
+
 @router.message(Command("events"))
 async def cmd_events(message: types.Message):
     user_id = message.from_user.id
@@ -60,6 +61,7 @@ async def cmd_events(message: types.Message):
     markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
     await message.answer(text, reply_markup=markup, parse_mode=ParseMode.MARKDOWN)
 
+
 @router.callback_query(F.data.startswith("sub_"))
 async def process_event_select(callback: types.CallbackQuery):
     user_id = callback.from_user.id
@@ -87,6 +89,7 @@ async def process_event_select(callback: types.CallbackQuery):
 
     prompt = get_text(user_id, "choose_time", title=title)
     await callback.message.edit_text(prompt, reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard), parse_mode=ParseMode.MARKDOWN)
+
 
 @router.callback_query(F.data.startswith("settime_"))
 async def process_reminder_time(callback: types.CallbackQuery):
