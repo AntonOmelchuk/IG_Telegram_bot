@@ -146,8 +146,6 @@ def get_event_emoji(title: str = "", event_type: str = "") -> str:
 def get_user_tz(user_id: int):
     tz_val = db.reference(f"{USERS_PATH}/{user_id}/timezone").get()
 
-    print(f"[DEBUG] Fetching TZ for User {user_id} from Firebase -> Got: '{tz_val}'", flush=True)
-
     if not tz_val:
         return ZoneInfo(DEFAULT_TIMEZONE)
 

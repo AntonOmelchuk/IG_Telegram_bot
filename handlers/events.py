@@ -8,10 +8,6 @@ from firebase_admin import db
 from config import EVENTS_PATH
 from utils.localization import get_user_lang, get_text, get_event_emoji, TEXTS, get_user_tz
 from services.scheduler import scheduler, send_reminder_notification
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -24,13 +20,11 @@ async def cmd_events(message: types.Message):
 
     user_tz = get_user_tz(user_id)
 
-    print(f"[DEBUG] User ID: {user_id} | Applied TZ: {user_tz}", flush=True)
-
     if not snapshot:
         await message.answer(get_text(user_id, "no_events", user_code))
         return
 
-    now_ms = int(datetime.now().timestamp() * 1000)
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
     upcoming_events = []
 
     for key, data in snapshot.items():
@@ -47,17 +41,8 @@ async def cmd_events(message: types.Message):
         if event_ms >= now_ms:
             title = data.get("title") or data.get("name") or key
 
-            # 🔍 ЛОГ 2: Вхідні та розраховані значення дати
             dt_utc = datetime.fromtimestamp(event_ms / 1000, tz=timezone.utc)
             dt_user = dt_utc.astimezone(user_tz)
-
-            print(
-                f"[DEBUG] Event: '{title}' | Raw: {raw_time} | "
-                f"Parsed UTC: {dt_utc.strftime('%Y-%m-%d %H:%M:%S')} | "
-                f"User Local: {dt_user.strftime('%Y-%m-%d %H:%M:%S')}",
-                flush=True
-            )
-
             event_type = data.get("type", "")
             upcoming_events.append({"id": key, "title": title, "type": event_type, "ms": event_ms})
 
@@ -72,7 +57,10 @@ async def cmd_events(message: types.Message):
 
     for ev in upcoming_events[:5]:
         emoji = get_event_emoji(ev["title"], ev["type"])
-        dt_str = datetime.fromtimestamp(ev["ms"] / 1000).strftime("%d.%m %H:%M")
+
+        dt_user = datetime.fromtimestamp(ev["ms"] / 1000, tz=timezone.utc).astimezone(user_tz)
+        dt_str = dt_user.strftime("%d.%m %H:%M")
+
         text += f"{emoji} **{ev['title']}** — `{dt_str}`\n"
 
         btn_label = get_text(user_id, "btn_remind", user_code, title=ev["title"])
@@ -117,6 +105,8 @@ async def process_reminder_time(callback: types.CallbackQuery):
     _, event_id, minutes_str = callback.data.split("_")
     minutes = int(minutes_str)
 
+    user_tz = get_user_tz(user_id)
+
     event_data = db.reference(f"{EVENTS_PATH}/{event_id}").get()
     if not event_data:
         await callback.answer("Event not found.", show_alert=True)
@@ -126,15 +116,15 @@ async def process_reminder_time(callback: types.CallbackQuery):
     event_ms = int(raw_time) if str(raw_time).isdigit() else int(datetime.fromisoformat(str(raw_time)).timestamp() * 1000)
     if event_ms < 10000000000: event_ms *= 1000
 
-    event_dt = datetime.fromtimestamp(event_ms / 1000)
-    remind_at = event_dt - timedelta(minutes=minutes)
+    event_dt_user = datetime.fromtimestamp(event_ms / 1000, tz=timezone.utc).astimezone(user_tz)
+    remind_at = event_dt_user - timedelta(minutes=minutes)
 
-    if remind_at <= datetime.now():
+    if remind_at <= datetime.now(user_tz):
         await callback.answer(get_text(user_id, "time_passed"), show_alert=True)
         return
 
     title = event_data.get("title") or event_data.get("name") or event_id
-    start_time_str = event_dt.strftime("%d.%m %H:%M")
+    start_time_str = event_dt_user.strftime("%d.%m %H:%M")
 
     job_id = f"remind_{user_id}_{event_id}_{minutes}"
     scheduler.add_job(
