@@ -1,3 +1,9 @@
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 from datetime import datetime, timedelta
 from aiogram import Router, types, F
 from aiogram.filters import Command
@@ -17,6 +23,8 @@ async def cmd_events(message: types.Message):
     user_id = message.from_user.id
     user_code = message.from_user.language_code
     snapshot = db.reference(EVENTS_PATH).get()
+
+    print(f"[DEBUG] User ID: {user_id} | Applied TZ: {user_tz}", flush=True)
 
     if not snapshot:
         await message.answer(get_text(user_id, "no_events", user_code))
@@ -38,6 +46,18 @@ async def cmd_events(message: types.Message):
 
         if event_ms >= now_ms:
             title = data.get("title") or data.get("name") or key
+
+            # 🔍 ЛОГ 2: Вхідні та розраховані значення дати
+            dt_utc = datetime.fromtimestamp(event_ms / 1000, tz=timezone.utc)
+            dt_user = dt_utc.astimezone(user_tz)
+
+            print(
+                f"[DEBUG] Event: '{title}' | Raw: {raw_time} | "
+                f"Parsed UTC: {dt_utc.strftime('%Y-%m-%d %H:%M:%S')} | "
+                f"User Local: {dt_user.strftime('%Y-%m-%d %H:%M:%S')}",
+                flush=True
+            )
+
             event_type = data.get("type", "")
             upcoming_events.append({"id": key, "title": title, "type": event_type, "ms": event_ms})
 

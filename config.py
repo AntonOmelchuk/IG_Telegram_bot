@@ -27,7 +27,7 @@ firebase_admin.initialize_app(cred, {
 MEMBERS_PATH = "iron_gates_members"
 EVENTS_PATH = "regroups/events"
 ALLY_IMAGE_PATH = "images/ally"
-USERS_PATH = "users"
+USERS_PATH = "telegram_users"
 
 # EMOJIS
 EVENT_EMOJIS = {
