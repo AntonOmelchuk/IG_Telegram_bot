@@ -7,7 +7,7 @@ from firebase_admin import db
 from config import USERS_PATH
 from utils.localization import get_text, get_main_reply_keyboard
 from handlers.events import cmd_events
-from handlers.clan import cmd_top, cmd_ally
+from handlers.clan import cmd_ally
 from handlers.reminders import cmd_reminders
 
 
@@ -48,6 +48,14 @@ async def menu_help_trigger(message: types.Message):
 
 @router.message(Command("start"))
 async def cmd_start(message: types.Message):
+    user = message.from_user
+
+    db.reference(f"{USERS_PATH}/{user.id}").update({
+        "first_name": user.first_name,
+        "username": user.username or "",
+        "full_name": user.full_name
+    })
+
     text = get_text(message.from_user.id, "welcome", message.from_user.language_code, name=message.from_user.first_name)
     await message.answer(text, parse_mode=ParseMode.MARKDOWN)
 
