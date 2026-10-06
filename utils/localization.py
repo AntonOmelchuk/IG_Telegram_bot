@@ -68,6 +68,7 @@ TEXTS = {
                     "🛡️ /events — Найближчі евенти та підписка на нагадування\n"
                     "🤝 /ally — Картинка складу альянсу\n"
                     "🌎 /timezone — Налаштувати свій часовий пояс (UTC / локальний час)\n"
+                    "🔔 /reminders - Переглянути активні нагадування\n"
                     "🏆 /top — Топ 10 гравців за PvP\n"
                     "🌐 /language — Змінити мову інтерфейсу\n"
                     "❓ /help — Ця довідка",
@@ -117,6 +118,7 @@ TEXTS = {
                     "🛡 /events — Upcoming events and reminder subscriptions\n"
                     "🤝 /ally — Alliance clan roster image\n"
                     "🌎 /timezone — Set your local timezone (UTC / local offset)\n"
+                    "🔔 /reminders - View your active reminders\n"
                     "🏆 /top — Top 10 PvP Leaderboard\n"
                     "🌐 /language — Switch language\n"
                     "❓ /help — Show this help message",
