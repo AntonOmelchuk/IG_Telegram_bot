@@ -1,9 +1,3 @@
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
 from datetime import datetime, timedelta
 from aiogram import Router, types, F
 from aiogram.filters import Command
@@ -12,8 +6,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from firebase_admin import db
 
 from config import EVENTS_PATH
-from utils.localization import get_user_lang, get_text, get_event_emoji, TEXTS
+from utils.localization import get_user_lang, get_text, get_event_emoji, TEXTS, get_user_tz
 from services.scheduler import scheduler, send_reminder_notification
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 router = Router()
 
@@ -23,6 +21,8 @@ async def cmd_events(message: types.Message):
     user_id = message.from_user.id
     user_code = message.from_user.language_code
     snapshot = db.reference(EVENTS_PATH).get()
+
+    user_tz = get_user_tz(user_id)
 
     print(f"[DEBUG] User ID: {user_id} | Applied TZ: {user_tz}", flush=True)
 

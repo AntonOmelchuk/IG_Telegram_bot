@@ -141,3 +141,27 @@ def get_event_emoji(title: str = "", event_type: str = "") -> str:
     if "ebc" in text or "dragon" in text: return EVENT_EMOJIS["ebc"]
     if "dm" in text or "deathmatch" in text: return EVENT_EMOJIS["dm"]
     return "🛡️"
+
+
+def get_user_tz(user_id: int):
+    tz_val = db.reference(f"{USERS_PATH}/{user_id}/timezone").get()
+
+    print(f"[DEBUG] Fetching TZ for User {user_id} from Firebase -> Got: '{tz_val}'", flush=True)
+
+    if not tz_val:
+        return ZoneInfo(DEFAULT_TIMEZONE)
+
+    tz_str = str(tz_val).strip()
+
+    clean_tz = tz_str.upper().replace("UTC", "").replace("GMT", "").strip()
+    try:
+        offset_hours = float(clean_tz)
+        return timezone(timedelta(hours=offset_hours))
+    except ValueError:
+        pass
+
+    try:
+        return ZoneInfo(tz_str)
+    except ZoneInfoNotFoundError:
+        print(f"[DEBUG] Zone '{tz_str}' not found, fallback to {DEFAULT_TIMEZONE}", flush=True)
+        return ZoneInfo(DEFAULT_TIMEZONE)
