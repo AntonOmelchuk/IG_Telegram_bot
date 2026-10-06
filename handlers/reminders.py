@@ -29,7 +29,7 @@ async def cmd_reminders(message: types.Message):
     text = f"{header}\n\n"
 
     for job in user_jobs:
-        _, title, minutes, start_time_str = job.args
+        _, title, minutes, start_time_str, *rest = job.args
         remind_time_str = job.next_run_time.strftime("%d.%m %H:%M") if job.next_run_time else "—"
 
         item_text = get_text(

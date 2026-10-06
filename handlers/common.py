@@ -15,7 +15,7 @@ router = Router()
 
 
 @router.message(Command("help"))
-async def cmd_start_or_help(message: types.Message):
+async def cmd_help(message: types.Message):
     user_id = message.from_user.id
     user_code = message.from_user.language_code
 
@@ -42,7 +42,7 @@ async def menu_ally_trigger(message: types.Message):
 
 @router.message(F.text.in_({"ℹ️ Довідка", "ℹ️ Help"}))
 async def menu_help_trigger(message: types.Message):
-    await cmd_start_or_help(message)
+    await cmd_help(message)
 
 
 @router.message(Command("start"))
@@ -82,12 +82,6 @@ async def process_lang_callback(callback: types.CallbackQuery):
 
     await callback.message.edit_text(success_text, parse_mode=ParseMode.MARKDOWN)
     await callback.answer()
-
-
-@router.message(Command("help"))
-async def cmd_help(message: types.Message):
-    text = get_text(message.from_user.id, "help_text", message.from_user.language_code)
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
 
 
 @router.message(Command("timezone"))
