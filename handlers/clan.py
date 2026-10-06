@@ -35,13 +35,19 @@ async def cmd_top(message: types.Message):
         await message.answer(get_text(user_id, "no_top_data"))
         return
 
+    members_data = snapshot.values() if isinstance(snapshot, dict) else snapshot
+
     members_list = []
-    for child in snapshot.values():
-        if child:
+    for child in members_data:
+        if isinstance(child, dict):
             members_list.append({
                 "name": child.get("name", "Unknown"),
                 "pvp": int(child.get("pvp", 0))
             })
+
+    if not members_list:
+        await message.answer(get_text(user_id, "no_top_data"))
+        return
 
     members_list.sort(key=lambda x: x["pvp"], reverse=True)
     medals = ["🥇", "🥈", "🥉"]

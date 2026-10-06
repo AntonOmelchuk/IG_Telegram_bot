@@ -1,9 +1,40 @@
 from firebase_admin import db
 from config import USERS_PATH, EVENT_EMOJIS
 
+from datetime import timezone, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+DEFAULT_TIMEZONE = "Europe/Kyiv"
+
+def get_user_tz(user_id: int):
+    """
+    Повертає об'єкт часового поясу (ZoneInfo або timezone).
+    Підтримує IANA назви (Europe/Kyiv) та числові зміщення (+7, -3).
+    """
+    tz_val = db.reference(f"{USERS_PATH}/{user_id}/timezone").get()
+
+    if not tz_val:
+        return ZoneInfo(DEFAULT_TIMEZONE)
+
+    tz_str = str(tz_val).strip()
+
+    # 1. Якщо збережено числове зміщення (наприклад "+7", "-3", "UTC+7", "7")
+    clean_tz = tz_str.upper().replace("UTC", "").replace("GMT", "").strip()
+    try:
+        offset_hours = float(clean_tz)
+        return timezone(timedelta(hours=offset_hours))
+    except ValueError:
+        pass
+
+    # 2. Якщо збережено IANA назву (наприклад "America/Sao_Paulo", "Asia/Ho_Chi_Minh")
+    try:
+        return ZoneInfo(tz_str)
+    except ZoneInfoNotFoundError:
+        return ZoneInfo(DEFAULT_TIMEZONE)
+
 TEXTS = {
     "uk": {
-        "welcome": "Вітаємо, **{name}**! Я менеджер клану **Iron Gates**.\nОбирай потрібну команду в меню або використовуй /help.",
+        "welcome": "Вітаємо, **{name}**! Я Менеджер **Iron Gates**.\nОбирай потрібну команду в меню або використовуй /help.",
         "select_lang": "Оберіть мову / Select language:",
         "lang_changed": "✅ Мову успішно змінено на Українську!",
         "no_events": "📅 Наразі немає запланованих евентів.",
@@ -16,6 +47,21 @@ TEXTS = {
         "reminder_msg": "⏰ **НАГАДУВАННЯ!**\nЕвент **{title}** розпочнеться через **{time}**!\n⏰ Час старту: `{start_time}`",
         "no_ally_image": "❌ Зображення альянсу відсутнє в базі даних.",
         "ally_title": "🛡️ Склад Альянсу",
+        "tz_title": (
+            "⏰ **Налаштування часового поясу**\n\n"
+            "Оберіть свій регіон з кнопок нижче або просто напишіть у чат ваше зміщення від UTC.\n\n"
+            "Приклади для вводу:\n"
+            "• `+7` або `7` (В'єтнам / Таїланд)\n"
+            "• `-3` (Бразилія)\n"
+            "• `+2` або `+3` (Європа)\n"
+            "• Назва IANA-зони: `America/Sao_Paulo`, `Asia/Ho_Chi_Minh`"
+        ),
+        "tz_set_success": "✅ Ваш часовий пояс успішно встановлено: **{tz}**\nТепер час евентів у команді `/events` буде відображатися за вашим місцевим часом!",
+        "tz_btn_br": "🇧🇷 Бразилія (UTC-3)",
+        "tz_btn_ua": "🇺🇦 Україна (UTC+2/+3)",
+        "tz_btn_eu": "🇵🇱 Польща / ЄС (UTC+1/+2)",
+        "tz_btn_vn": "🇻🇳 В'єтнам (UTC+7)",
+        "tz_btn_utc": "🌐 UTC (+0)",
         "no_top_data": "🏆 База даних гравців порожня.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "help_text": "📖 **Інструкція з команд:**\n\n"
@@ -26,7 +72,7 @@ TEXTS = {
                     "❓ /help — Ця довідка"
     },
     "en": {
-        "welcome": "Welcome, **{name}**! I am the **Iron Gates** clan manager.\nChoose a command below or use /help.",
+        "welcome": "Welcome, **{name}**! I am the **Iron Gates** Manager.\nChoose a command below or use /help.",
         "select_lang": "Select language / Оберіть мову:",
         "lang_changed": "✅ Language successfully changed to English!",
         "no_events": "📅 No upcoming events scheduled at the moment.",
@@ -39,6 +85,21 @@ TEXTS = {
         "reminder_msg": "⏰ **REMINDER!**\nEvent **{title}** starts in **{time}**!\n⏰ Start time: `{start_time}`",
         "no_ally_image": "❌ Alliance image is missing in database.",
         "ally_title": "🛡️ Alliance Clan Roster",
+        "tz_title": (
+            "⏰ **Timezone Settings**\n\n"
+            "Choose your region from the buttons below or simply type your UTC offset in chat.\n\n"
+            "Input examples:\n"
+            "• `+7` or `7` (Vietnam / Thailand)\n"
+            "• `-3` (Brazil)\n"
+            "• `+2` or `+3` (Europe)\n"
+            "• IANA zone name: `America/Sao_Paulo`, `Asia/Ho_Chi_Minh`"
+        ),
+        "tz_set_success": "✅ Your timezone has been set to: **{tz}**\nNow event times in `/events` will be displayed in your local time!",
+        "tz_btn_br": "🇧🇷 Brazil (UTC-3)",
+        "tz_btn_ua": "🇺🇦 Ukraine (UTC+2/+3)",
+        "tz_btn_eu": "🇵🇱 Poland / EU (UTC+1/+2)",
+        "tz_btn_vn": "🇻🇳 Vietnam (UTC+7)",
+        "tz_btn_utc": "🌐 UTC (+0)",
         "no_top_data": "🏆 Player database is empty.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "help_text": "📖 **Command Guide:**\n\n"
