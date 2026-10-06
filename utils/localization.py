@@ -64,6 +64,10 @@ TEXTS = {
         "tz_btn_utc": "🌐 UTC (+0)",
         "no_top_data": "🏆 База даних гравців порожня.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
+        "menu_events": "📅 Евенти",
+        "menu_top": "🏆 Топ PvP",
+        "menu_tz": "⏰ Часовий пояс",
+        "menu_help": "ℹ️ Довідка",
         "help_text": "📖 **Інструкція з команд:**\n\n"
                     "🛡️ /events — Найближчі евенти та підписка на нагадування\n"
                     "🤝 /ally — Картинка складу альянсу\n"
@@ -103,6 +107,10 @@ TEXTS = {
         "tz_btn_utc": "🌐 UTC (+0)",
         "no_top_data": "🏆 Player database is empty.",
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
+        "menu_events": "📅 Events",
+        "menu_top": "🏆 Top PvP",
+        "menu_tz": "⏰ Timezone",
+        "menu_help": "ℹ️ Help",
         "help_text": "📖 **Command Guide:**\n\n"
                     "🛡 /events — Upcoming events and reminder subscriptions\n"
                     "🤝 /ally — Alliance clan roster image\n"
@@ -163,3 +171,23 @@ def get_user_tz(user_id: int):
     except ZoneInfoNotFoundError:
         print(f"[DEBUG] Zone '{tz_str}' not found, fallback to {DEFAULT_TIMEZONE}", flush=True)
         return ZoneInfo(DEFAULT_TIMEZONE)
+
+
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+
+def get_main_reply_keyboard(user_id: int, user_code: str = None) -> ReplyKeyboardMarkup:
+
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text=get_text(user_id, "menu_events", user_code)),
+                KeyboardButton(text=get_text(user_id, "menu_top", user_code))
+            ],
+            [
+                KeyboardButton(text=get_text(user_id, "menu_tz", user_code)),
+                KeyboardButton(text=get_text(user_id, "menu_help", user_code))
+            ]
+        ],
+        resize_keyboard=True,
+        persistent=True
+    )
