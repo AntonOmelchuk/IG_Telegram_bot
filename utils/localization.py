@@ -8,10 +8,6 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 DEFAULT_TIMEZONE = "Europe/Kyiv"
 
 def get_user_tz(user_id: int):
-    """
-    Повертає об'єкт часового поясу (ZoneInfo або timezone).
-    Підтримує IANA назви (Europe/Kyiv) та числові зміщення (+7, -3).
-    """
     tz_val = db.reference(f"{USERS_PATH}/{user_id}/timezone").get()
 
     if not tz_val:
@@ -19,7 +15,6 @@ def get_user_tz(user_id: int):
 
     tz_str = str(tz_val).strip()
 
-    # 1. Якщо збережено числове зміщення (наприклад "+7", "-3", "UTC+7", "7")
     clean_tz = tz_str.upper().replace("UTC", "").replace("GMT", "").strip()
     try:
         offset_hours = float(clean_tz)
@@ -27,7 +22,6 @@ def get_user_tz(user_id: int):
     except ValueError:
         pass
 
-    # 2. Якщо збережено IANA назву (наприклад "America/Sao_Paulo", "Asia/Ho_Chi_Minh")
     try:
         return ZoneInfo(tz_str)
     except ZoneInfoNotFoundError:
