@@ -1,10 +1,9 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.enums import ParseMode
-from firebase_admin import db
 
-from config import USERS_PATH
 from utils.localization import get_text
+from services.scheduler import scheduler
 
 router = Router()
 
@@ -15,24 +14,26 @@ async def cmd_reminders(message: types.Message):
     user_id = message.from_user.id
     user_code = message.from_user.language_code
 
-    user_data = db.reference(f"{USERS_PATH}/{user_id}").get()
+    all_jobs = scheduler.get_jobs()
 
-    if not user_data or "subscriptions" not in user_data or not user_data["subscriptions"]:
-        await message.answer(get_text(user_id, "no_active_reminders", user_code))
-        return
+    user_jobs = [
+        job for job in all_jobs
+        if job.id.startswith(f"remind_{user_id}_")
+    ]
 
-    subscriptions = user_data["subscriptions"]
-    active_events = [k for k, v in subscriptions.items() if v]
-
-    if not active_events:
+    if not user_jobs:
         await message.answer(get_text(user_id, "no_active_reminders", user_code))
         return
 
     header = get_text(user_id, "active_reminders_header", user_code)
     text = f"{header}\n\n"
 
-    for event_key in active_events:
-        event_title = get_text(user_id, f"event_{event_key}", user_code) or event_key
-        text += f"• **{event_title}**\n"
+    for job in user_jobs:
+        _, title, minutes, start_time_str = job.args
+
+        remind_time_str = job.next_run_time.strftime("%d.%m %H:%M") if job.next_run_time else "—"
+
+        text += f"• **{title}** (початок: `{start_time_str}`)\n"
+        text += f"  └ ⏰ Нагадування за {minutes} хв (`{remind_time_str}`)\n\n"
 
     await message.answer(text, parse_mode=ParseMode.MARKDOWN)

@@ -36,10 +36,10 @@ TEXTS = {
         "events_header": "🛡️ **Найближчі евенти:**\n\n",
         "btn_remind": "🔔 Нагадати: {title}",
         "choose_time": "⏰ Оберіть, за скільки часу до початку **{title}** надіслати нагадування:",
-        "time_options": {"5": "⏱️ За 5 хв", "15": "⏱️ За 15 хв", "30": "⏱️ За 30 хв", "60": "⏱️ За 1 годину"},
+        "time_options": {"5": "⏱️ 5 хв", "15": "⏱️ 15 хв", "30": "⏱️ 30 хв", "60": "⏱️ 1 годину"},
         "reminder_set": "✅ Нагадування встановлено! Я надішлю повідомлення про **{title}** за **{time}**.",
         "time_passed": "❌ Цей час нагадування вже минув!",
-        "reminder_msg": "⏰ **НАГАДУВАННЯ!**\nЕвент **{title}** розпочнеться через **{time}**!\n⏰ Час старту: `{start_time}`",
+        "reminder_msg": "🔔 **НАГАДУВАННЯ!**\nЕвент **{title}** розпочнеться через **{time}**!\n⏰ Час старту: `{start_time}`",
         "no_ally_image": "❌ Зображення альянсу відсутнє в базі даних.",
         "ally_title": "🛡️ Склад Альянсу",
         "tz_title": (
@@ -85,10 +85,10 @@ TEXTS = {
         "events_header": "🛡️ **Upcoming Events:**\n\n",
         "btn_remind": "🔔 Remind: {title}",
         "choose_time": "⏰ Choose how long before **{title}** to send a reminder:",
-        "time_options": {"5": "⏱️ 5m before", "15": "⏱️ 15m before", "30": "⏱️ 30m before", "60": "⏱️ 1 hour before"},
+        "time_options": {"5": "⏱️ 5m", "15": "⏱️ 15m", "30": "⏱️ 30m", "60": "⏱️ 1 hour"},
         "reminder_set": "✅ Reminder set! I will send a message for **{title}** **{time}** before start.",
         "time_passed": "❌ This reminder time has already passed!",
-        "reminder_msg": "⏰ **REMINDER!**\nEvent **{title}** starts in **{time}**!\n⏰ Start time: `{start_time}`",
+        "reminder_msg": "🔔 **REMINDER!**\nEvent **{title}** starts in **{time}**!\n⏰ Start time: `{start_time}`",
         "no_ally_image": "❌ Alliance image is missing in database.",
         "ally_title": "🛡️ Alliance Clan Roster",
         "tz_title": (
@@ -189,7 +189,7 @@ def get_main_reply_keyboard(user_id: int, user_code: str = None) -> ReplyKeyboar
                 KeyboardButton(text=get_text(user_id, "menu_top", user_code))
             ],
             [
-                KeyboardButton(text=get_text(user_id, "menu_tz", user_code)),
+                KeyboardButton(text=get_text(user_id, "menu_ally", user_code)),
                 KeyboardButton(text=get_text(user_id, "menu_help", user_code))
             ]
         ],

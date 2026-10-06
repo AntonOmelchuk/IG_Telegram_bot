@@ -36,7 +36,7 @@ async def menu_top_trigger(message: types.Message):
 
 
 @router.message(F.text.in_({"🤝 Альянс", "🤝 Alliance"}))
-async def menu_tz_trigger(message: types.Message):
+async def menu_ally_trigger(message: types.Message):
     await cmd_ally(message)
 
 
