@@ -16,7 +16,7 @@ async def send_reminder_notification(
     lang = get_user_lang(user_id)
     time_label = TEXTS[lang]["time_options"].get(str(minutes), f"{minutes}m")
     emoji = get_event_emoji(title, event_type)
-    msg_text = get_text(user_id, "reminder_msg", emoji=emoji title=title, time=time_label, start_time=start_time_str)
+    msg_text = get_text(user_id, "reminder_msg", emoji=emoji, title=title, time=time_label, start_time=start_time_str)
 
     try:
         await bot.send_message(chat_id=user_id, text=msg_text, parse_mode=ParseMode.MARKDOWN)
