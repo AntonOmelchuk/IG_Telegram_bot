@@ -1,5 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.enums import ParseMode
 from firebase_admin import db
 
@@ -10,7 +11,9 @@ router = Router()
 
 
 @router.message(Command("ally"))
-async def cmd_ally(message: types.Message):
+async def cmd_ally(message: types.Message, state: FSMContext = None):
+    if state:
+        await state.clear()
     user_id = message.from_user.id
     snapshot = db.reference(ALLY_IMAGE_PATH).get()
 
@@ -29,7 +32,9 @@ async def cmd_ally(message: types.Message):
 
 
 @router.message(Command("top"))
-async def cmd_top(message: types.Message):
+async def cmd_top(message: types.Message, state: FSMContext = None):
+    if state:
+        await state.clear()
     user_id = message.from_user.id
     snapshot = db.reference(MEMBERS_PATH).get()
 
@@ -43,7 +48,7 @@ async def cmd_top(message: types.Message):
     for child in members_data:
         if isinstance(child, dict):
             members_list.append({
-                "name": child.get("name", "Unknown"),
+                "name": child.get("name") or get_text(user_id, "unknown_player"),
                 "pvp": int(child.get("pvp", 0))
             })
 

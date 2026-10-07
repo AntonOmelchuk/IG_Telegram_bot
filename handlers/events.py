@@ -1,19 +1,23 @@
-from datetime import datetime, timedelta, timezone
-from aiogram import Router, types, F
-from aiogram.filters import Command
+from datetime import datetime, timezone
+
+from aiogram import F, Router, types
 from aiogram.enums import ParseMode
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from firebase_admin import db
 
 from config import EVENTS_PATH
-from utils.localization import get_user_lang, get_text, get_event_emoji, TEXTS, get_user_tz
-from services.scheduler import scheduler, send_reminder_notification
+from services.reminders import apply_event_reminder, parse_event_ms
+from utils.localization import get_event_emoji, get_text, get_time_keyboard, get_time_label, get_user_tz
 
 router = Router()
 
 
 @router.message(Command("events"))
-async def cmd_events(message: types.Message):
+async def cmd_events(message: types.Message, state: FSMContext = None):
+    if state:
+        await state.clear()
     user_id = message.from_user.id
     user_code = message.from_user.language_code
     snapshot = db.reference(EVENTS_PATH).get()
@@ -28,21 +32,14 @@ async def cmd_events(message: types.Message):
     upcoming_events = []
 
     for key, data in snapshot.items():
-        if not data: continue
-        raw_time = data.get("respawnTimestamp") or data.get("timestamp") or data.get("date") or data.get("time")
-        if not raw_time: continue
-
-        try:
-            event_ms = int(raw_time) if str(raw_time).isdigit() else int(datetime.fromisoformat(str(raw_time)).timestamp() * 1000)
-            if event_ms < 10000000000: event_ms *= 1000
-        except ValueError:
+        if not data:
+            continue
+        event_ms = parse_event_ms(data)
+        if event_ms is None:
             continue
 
         if event_ms >= now_ms:
             title = data.get("title") or data.get("name") or key
-
-            dt_utc = datetime.fromtimestamp(event_ms / 1000, tz=timezone.utc)
-            dt_user = dt_utc.astimezone(user_tz)
             event_type = data.get("type", "")
             upcoming_events.append({"id": key, "title": title, "type": event_type, "ms": event_ms})
 
@@ -73,72 +70,39 @@ async def cmd_events(message: types.Message):
 @router.callback_query(F.data.startswith("sub_"))
 async def process_event_select(callback: types.CallbackQuery):
     user_id = callback.from_user.id
-    event_id = callback.data.split("_")[1]
+    user_code = callback.from_user.language_code
+    event_id = callback.data.removeprefix("sub_")
 
     event_data = db.reference(f"{EVENTS_PATH}/{event_id}").get()
     if not event_data:
-        await callback.answer("Event not found.", show_alert=True)
+        await callback.answer(get_text(user_id, "event_not_found", user_code), show_alert=True)
         return
 
     title = event_data.get("title") or event_data.get("name") or event_id
-    lang = get_user_lang(user_id)
-    time_options = TEXTS[lang]["time_options"]
-
-    keyboard = [
-        [
-            InlineKeyboardButton(text=time_options["5"], callback_data=f"settime_{event_id}_5"),
-            InlineKeyboardButton(text=time_options["15"], callback_data=f"settime_{event_id}_15")
-        ],
-        [
-            InlineKeyboardButton(text=time_options["30"], callback_data=f"settime_{event_id}_30"),
-            InlineKeyboardButton(text=time_options["60"], callback_data=f"settime_{event_id}_60")
-        ]
-    ]
+    keyboard = get_time_keyboard(user_id, event_id, user_code, prefix="settime")
 
     prompt = get_text(user_id, "choose_time", title=title)
-    await callback.message.edit_text(prompt, reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard), parse_mode=ParseMode.MARKDOWN)
+    await callback.message.edit_text(prompt, reply_markup=keyboard, parse_mode=ParseMode.MARKDOWN)
+    await callback.answer()
 
 
 @router.callback_query(F.data.startswith("settime_"))
 async def process_reminder_time(callback: types.CallbackQuery):
     user_id = callback.from_user.id
-    _, event_id, minutes_str = callback.data.split("_")
+    user_code = callback.from_user.language_code
+    payload = callback.data.removeprefix("settime_")
+    event_id, minutes_str = payload.rsplit("_", 1)
     minutes = int(minutes_str)
 
-    user_tz = get_user_tz(user_id)
-
-    event_data = db.reference(f"{EVENTS_PATH}/{event_id}").get()
-    if not event_data:
-        await callback.answer("Event not found.", show_alert=True)
+    status, title = apply_event_reminder(user_id, event_id, minutes)
+    if status == "not_found":
+        await callback.answer(get_text(user_id, "event_not_found", user_code), show_alert=True)
         return
-
-    raw_time = event_data.get("respawnTimestamp") or event_data.get("timestamp") or event_data.get("date") or event_data.get("time")
-    event_ms = int(raw_time) if str(raw_time).isdigit() else int(datetime.fromisoformat(str(raw_time)).timestamp() * 1000)
-    if event_ms < 10000000000: event_ms *= 1000
-
-    event_dt_user = datetime.fromtimestamp(event_ms / 1000, tz=timezone.utc).astimezone(user_tz)
-    remind_at = event_dt_user - timedelta(minutes=minutes)
-
-    if remind_at <= datetime.now(user_tz):
+    if status == "time_passed":
         await callback.answer(get_text(user_id, "time_passed"), show_alert=True)
         return
 
-    title = event_data.get("title") or event_data.get("name") or event_id
-    start_time_str = event_dt_user.strftime("%d.%m %H:%M")
-    event_type = event_data.get("type")
-
-    job_id = f"remind_{user_id}_{event_id}_{minutes}"
-    scheduler.add_job(
-        send_reminder_notification,
-        trigger="date",
-        run_date=remind_at,
-        args=[user_id, title, minutes, start_time_str, event_type],
-        id=job_id,
-        replace_existing=True
-    )
-
-    lang = get_user_lang(user_id)
-    time_label = TEXTS[lang]["time_options"].get(str(minutes), f"{minutes}m")
+    time_label = get_time_label(user_id, minutes, user_code)
     success_msg = get_text(user_id, "reminder_set", title=title, time=time_label)
-
     await callback.message.edit_text(success_msg, parse_mode=ParseMode.MARKDOWN)
+    await callback.answer()
