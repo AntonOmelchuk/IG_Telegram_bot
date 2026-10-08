@@ -58,7 +58,7 @@ async def cmd_events(message: types.Message, state: FSMContext = None):
         dt_user = datetime.fromtimestamp(ev["ms"] / 1000, tz=timezone.utc).astimezone(user_tz)
         dt_str = dt_user.strftime("%d.%m %H:%M")
 
-        text += f"{emoji} **{ev['title']}** — `{dt_str}`\n"
+        text += f"{emoji} *{ev['title']}* — `{dt_str}`\n"
 
         btn_label = get_text(user_id, "btn_remind", user_code, title=ev["title"])
         keyboard.append([InlineKeyboardButton(text=btn_label, callback_data=f"sub_{ev['id']}")])

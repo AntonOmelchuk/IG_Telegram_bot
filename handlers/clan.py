@@ -59,9 +59,9 @@ async def cmd_top(message: types.Message, state: FSMContext = None):
     members_list.sort(key=lambda x: x["pvp"], reverse=True)
     medals = ["🥇", "🥈", "🥉"]
 
-    text = f"**{get_text(user_id, 'top_title')}**\n\n"
+    text = f"*{get_text(user_id, 'top_title')}*\n\n"
     for idx, member in enumerate(members_list[:10]):
-        icon = medals[idx] if idx < 3 else f"**#{idx + 1}**"
-        text += f"{icon} **{member['name']}** — `{member['pvp']}` PvP\n"
+        icon = medals[idx] if idx < 3 else f"*{idx + 1}*"
+        text += f"{icon} *{member['name']}* — `{member['pvp']}` PvP\n"
 
     await message.answer(text, parse_mode=ParseMode.MARKDOWN)

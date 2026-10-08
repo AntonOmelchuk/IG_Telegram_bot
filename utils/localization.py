@@ -112,7 +112,7 @@ TEXTS = {
             "• `+2` or `+3` (Europe)\n"
             "• IANA zone name: `America/Sao_Paulo`, `Asia/Ho_Chi_Minh`"
         ),
-        "lang_set_success": "✅ Language successfully set to **English**! 🇬🇧\nAll messages and events will now be displayed in this language.",
+        "lang_set_success": "✅ Language successfully set to *English*! 🇬🇧\nAll messages and events will now be displayed in this language.",
         "tz_set_success": "✅ Your timezone has been set to: *{tz}*\nNow event times in `/events` will be displayed in your local time!",
         "tz_btn_br": "🇧🇷 Brazil (UTC-3)",
         "tz_btn_ua": "🇺🇦 Ukraine (UTC+2/+3)",
