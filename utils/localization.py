@@ -22,6 +22,8 @@ TEXTS = {
         "lang_changed": "✅ Мову успішно змінено на Українську!",
         "no_events": "📅 Наразі немає запланованих евентів.",
         "events_header": "📅 *Найближчі евенти:*\n\n",
+        "no_pvp_events": "⚔️ Наразі немає запланованих PvP евентів.",
+        "pvp_events_header": "⚔️ *Найближчі PvP евенти:*\n\n",
         "btn_remind": "🔔 Нагадати: {title}",
         "choose_time": "⏰ Оберіть, за скільки часу до початку *{title}* надіслати нагадування:",
         "reminder_set": "✅ Нагадування встановлено! Я надішлю повідомлення про *{title}* за *{time}*.",
@@ -50,6 +52,7 @@ TEXTS = {
         "top_title": "🏆 Топ 10 Iron Gates — PvP таблиця",
         "unknown_player": "Невідомий",
         "menu_events": "📅 Евенти",
+        "menu_pvp_events": "⚔️ PvP евенти",
         "menu_ally": "🤝 Альянс",
         "menu_reminders": "🔔 Нагадування",
         "menu_top": "🏆 Топ PvP",
@@ -58,6 +61,7 @@ TEXTS = {
         "menu_profile": "👤 Профіль",
         "help_text": "📖 *Інструкція з команд:*\n\n"
                     "🛡️ /events — Найближчі евенти та підписка на нагадування\n"
+                    "⚔️ `/pvp_events` — PvP евенти та підписка на нагадування\n"
                     "🤝 /ally — Зображення зі складом альянсу\n"
                     "🌎 /timezone — Налаштувати свій часовий пояс (UTC / локальний час)\n"
                     "🔔 /reminders — Переглянути, змінити або скасувати нагадування\n"
@@ -95,6 +99,8 @@ TEXTS = {
         "lang_changed": "✅ Language successfully changed to English!",
         "no_events": "📅 No upcoming events scheduled at the moment.",
         "events_header": "📅 *Upcoming Events:*\n\n",
+        "no_pvp_events": "⚔️ No upcoming PvP events scheduled at the moment.",
+        "pvp_events_header": "⚔️ *Upcoming PvP Events:*\n\n",
         "btn_remind": "🔔 Remind: {title}",
         "choose_time": "⏰ Choose how long before *{title}* to send a reminder:",
         "reminder_set": "✅ Reminder set! I will send a message for *{title}* *{time}* before start.",
@@ -123,6 +129,7 @@ TEXTS = {
         "top_title": "🏆 Top 10 Iron Gates — PvP Leaderboard",
         "unknown_player": "Unknown",
         "menu_events": "📅 Events",
+        "menu_pvp_events": "⚔️ PvP Events",
         "menu_ally": "🤝 Alliance",
         "menu_reminders": "🔔 Reminders",
         "menu_top": "🏆 Top PvP",
@@ -131,6 +138,7 @@ TEXTS = {
         "menu_profile": "👤 Profile",
         "help_text": "📖 *Command Guide:*\n\n"
                     "🛡 /events — Upcoming events and reminder subscriptions\n"
+                    "⚔️ `/pvp_events` — PvP events and reminder subscriptions\n"
                     "🤝 /ally — Alliance clan roster image\n"
                     "🌎 /timezone — Set your local timezone (UTC / local offset)\n"
                     "🔔 /reminders — View, edit, or cancel your reminders\n"
@@ -223,6 +231,7 @@ def get_tz_keyboard(user_id: int, user_code: str = None) -> InlineKeyboardMarkup
 
 def get_event_emoji(title: str = "", event_type: str = "") -> str:
     text = f"{title} {event_type}".lower()
+
     if "qa" in text or "queen" in text or "ant" in text:
         return EVENT_EMOJIS["qa"]
     if "core" in text:
@@ -241,16 +250,16 @@ def get_event_emoji(title: str = "", event_type: str = "") -> str:
         return EVENT_EMOJIS["valakas"]
     if "siege" in text:
         return EVENT_EMOJIS["siege"]
+    if "dm" in text or "death match" in text:
+        return EVENT_EMOJIS["dm"]
     if "ch" in text or "hall" in text:
         return EVENT_EMOJIS["ch"]
     if "mtb" in text:
         return EVENT_EMOJIS["mtb"]
     if "ctb" in text:
         return EVENT_EMOJIS["ctb"]
-    if "ebc" in text or "dragon" in text:
+    if "ebc" in text or "epic boss challenge" in text:
         return EVENT_EMOJIS["ebc"]
-    if "dm" in text or "deathmatch" in text:
-        return EVENT_EMOJIS["dm"]
     return "🛡️"
 
 
@@ -281,13 +290,14 @@ def get_main_reply_keyboard(user_id: int, user_code: str = None) -> ReplyKeyboar
         keyboard=[
             [
                 KeyboardButton(text=get_text(user_id, "menu_events", user_code)),
+                KeyboardButton(text=get_text(user_id, "menu_pvp_events", user_code)),
+            ],
+            [
                 KeyboardButton(text=get_text(user_id, "menu_reminders", user_code)),
-            ],
-            [
                 KeyboardButton(text=get_text(user_id, "menu_ally", user_code)),
-                KeyboardButton(text=get_text(user_id, "menu_profile", user_code)),
             ],
             [
+                KeyboardButton(text=get_text(user_id, "menu_profile", user_code)),
                 KeyboardButton(text=get_text(user_id, "menu_help", user_code)),
             ],
         ],

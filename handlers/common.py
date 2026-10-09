@@ -9,7 +9,7 @@ from firebase_admin import db
 
 from config import USERS_PATH
 from handlers.clan import cmd_ally
-from handlers.events import cmd_events
+from handlers.events import cmd_events, cmd_pvp_events
 from handlers.profile import cmd_profile
 from handlers.reminders import cmd_reminders
 from handlers.states import SetupStates
@@ -44,6 +44,7 @@ async def _finish_setup(target: types.Message, user, user_code: str = None):
     await target.answer(text, reply_markup=get_main_reply_keyboard(user.id, user_code), parse_mode=ParseMode.MARKDOWN)
 
 
+@router.message(F.text.in_({"ℹ️ Довідка", "ℹ️ Help"}))
 @router.message(Command("help"))
 async def cmd_help(message: types.Message, state: FSMContext = None):
     if state:
@@ -63,6 +64,12 @@ async def menu_events_trigger(message: types.Message, state: FSMContext):
     await cmd_events(message)
 
 
+@router.message(F.text.in_({"⚔️ PvP евенти", "⚔️ PvP Events"}))
+async def menu_pvp_events_trigger(message: types.Message, state: FSMContext):
+    await state.clear()
+    await cmd_pvp_events(message)
+
+
 @router.message(F.text.in_({"🔔 Нагадування", "🔔 Reminders"}))
 async def menu_reminders_trigger(message: types.Message, state: FSMContext):
     await state.clear()
@@ -78,11 +85,6 @@ async def menu_ally_trigger(message: types.Message, state: FSMContext):
 @router.message(F.text.in_({"👤 Профіль", "👤 Profile"}))
 async def menu_profile_trigger(message: types.Message, state: FSMContext):
     await cmd_profile(message, state)
-
-
-@router.message(F.text.in_({"ℹ️ Довідка", "ℹ️ Help"}))
-async def menu_help_trigger(message: types.Message, state: FSMContext):
-    await cmd_help(message, state)
 
 
 @router.message(Command("start"))

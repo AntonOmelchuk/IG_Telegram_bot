@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+# TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN_THE_3RD_SIDE")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # FIREBASE INITIALIZATION
@@ -26,6 +27,7 @@ firebase_admin.initialize_app(cred, {
 # DATABASE PATHS
 MEMBERS_PATH = "iron_gates_members"
 EVENTS_PATH = "regroups/events"
+PVP_EVENTS_PATH = "pvp_events"
 ALLY_IMAGE_PATH = "images/ally"
 USERS_PATH = "telegram_users"
 

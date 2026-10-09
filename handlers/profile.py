@@ -12,7 +12,7 @@ from utils.localization import TEXTS, get_text
 MENU_BUTTONS = {
     TEXTS[lang][key]
     for lang in TEXTS
-    for key in ("menu_events", "menu_reminders", "menu_ally", "menu_profile", "menu_help")
+    for key in ("menu_events", "menu_pvp_events", "menu_reminders", "menu_ally", "menu_profile", "menu_help")
 }
 
 router = Router()

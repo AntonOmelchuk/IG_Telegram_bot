@@ -8,7 +8,12 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from firebase_admin import db
 
 from config import EVENTS_PATH
-from services.reminders import apply_event_reminder, parse_event_ms
+from services.reminders import (
+    apply_event_reminder,
+    find_pvp_event,
+    list_upcoming_pvp_events,
+    parse_event_ms,
+)
 from utils.localization import get_event_emoji, get_text, get_time_keyboard, get_time_label, get_user_tz
 
 router = Router()
@@ -91,6 +96,74 @@ async def process_reminder_time(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     user_code = callback.from_user.language_code
     payload = callback.data.removeprefix("settime_")
+    event_id, minutes_str = payload.rsplit("_", 1)
+    minutes = int(minutes_str)
+
+    status, title = apply_event_reminder(user_id, event_id, minutes)
+    if status == "not_found":
+        await callback.answer(get_text(user_id, "event_not_found", user_code), show_alert=True)
+        return
+    if status == "time_passed":
+        await callback.answer(get_text(user_id, "time_passed"), show_alert=True)
+        return
+
+    time_label = get_time_label(user_id, minutes, user_code)
+    success_msg = get_text(user_id, "reminder_set", title=title, time=time_label)
+    await callback.message.edit_text(success_msg, parse_mode=ParseMode.MARKDOWN)
+    await callback.answer()
+
+
+@router.message(Command("pvp_events"))
+async def cmd_pvp_events(message: types.Message, state: FSMContext = None):
+    if state:
+        await state.clear()
+    user_id = message.from_user.id
+    user_code = message.from_user.language_code
+    user_tz = get_user_tz(user_id)
+    upcoming_events = list_upcoming_pvp_events()
+
+    if not upcoming_events:
+        await message.answer(get_text(user_id, "no_pvp_events", user_code))
+        return
+
+    text = get_text(user_id, "pvp_events_header", user_code)
+    keyboard = []
+
+    for ev in upcoming_events:
+        emoji = get_event_emoji(ev["title"], ev["type"])
+        dt_user = datetime.fromtimestamp(ev["ms"] / 1000, tz=timezone.utc).astimezone(user_tz)
+        dt_str = dt_user.strftime("%d.%m %H:%M")
+        text += f"{emoji} *{ev['title']}* — `{dt_str}`\n"
+        btn_label = get_text(user_id, "btn_remind", user_code, title=ev["title"])
+        keyboard.append([InlineKeyboardButton(text=btn_label, callback_data=f"pvpsub_{ev['id']}")])
+
+    markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
+    await message.answer(text, reply_markup=markup, parse_mode=ParseMode.MARKDOWN)
+
+
+@router.callback_query(F.data.startswith("pvpsub_"))
+async def process_pvp_event_select(callback: types.CallbackQuery):
+    user_id = callback.from_user.id
+    user_code = callback.from_user.language_code
+    event_id = callback.data.removeprefix("pvpsub_")
+
+    event_data = find_pvp_event(event_id)
+    if not event_data:
+        await callback.answer(get_text(user_id, "event_not_found", user_code), show_alert=True)
+        return
+
+    title = event_data.get("name") or event_data.get("title") or event_id
+    keyboard = get_time_keyboard(user_id, event_id, user_code, prefix="pvpsettime")
+    prompt = get_text(user_id, "choose_time", title=title)
+    await callback.message.edit_text(prompt, reply_markup=keyboard, parse_mode=ParseMode.MARKDOWN)
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("pvpsettime_"))
+async def process_pvp_reminder_time(callback: types.CallbackQuery):
+    user_id = callback.from_user.id
+    user_code = callback.from_user.language_code
+    payload = callback.data.removeprefix("pvpsettime_")
     event_id, minutes_str = payload.rsplit("_", 1)
     minutes = int(minutes_str)
 

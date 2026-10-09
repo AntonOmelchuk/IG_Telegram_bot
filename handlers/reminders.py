@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from services.reminders import apply_event_reminder, delete_reminder, get_user_reminders
+from services.reminders import apply_event_reminder, delete_reminder, get_event_for_reminder, get_user_reminders
 from utils.localization import get_text, get_time_keyboard, get_user_tz
 
 router = Router()
@@ -18,12 +18,20 @@ def _format_reminders(user_id: int, user_code: str = None):
     now = datetime.now(timezone.utc)
 
     items = []
+    now_ms = int(now.timestamp() * 1000)
     for event_id, rem in (reminders or {}).items():
         if not isinstance(rem, dict):
             continue
-        remind_at_ms = rem.get("remind_at_ms")
-        event_ms = rem.get("event_ms")
-        if remind_at_ms and datetime.fromtimestamp(int(remind_at_ms) / 1000, tz=timezone.utc) <= now:
+        minutes = int(rem.get("minutes") or 0)
+        _, live_ms = get_event_for_reminder(event_id)
+        event_ms = live_ms or rem.get("event_ms")
+        if event_ms:
+            event_ms = int(event_ms)
+            remind_at_ms = event_ms - minutes * 60 * 1000
+        else:
+            remind_at_ms = rem.get("remind_at_ms")
+
+        if event_ms and event_ms <= now_ms:
             delete_reminder(user_id, event_id)
             continue
         items.append((event_id, rem, event_ms, remind_at_ms))
