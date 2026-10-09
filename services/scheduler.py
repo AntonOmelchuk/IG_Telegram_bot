@@ -1,9 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram.enums import ParseMode
-from firebase_admin import db
 
 from bot import bot
-from config import USERS_PATH
 from utils.localization import get_event_emoji, get_text, get_time_label
 
 scheduler = AsyncIOScheduler()
@@ -25,8 +23,3 @@ async def send_reminder_notification(
         await bot.send_message(chat_id=user_id, text=msg_text, parse_mode=ParseMode.MARKDOWN)
     except Exception as e:
         print(f"Error sending reminder to {user_id}: {e}")
-    finally:
-        try:
-            db.reference(f"{USERS_PATH}/{user_id}/reminders/{event_id}").delete()
-        except Exception as e:
-            print(f"Error deleting reminder {event_id} for {user_id}: {e}")
