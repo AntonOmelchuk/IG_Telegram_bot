@@ -32,7 +32,14 @@ def _profile_text(user_id: int, user_code: str = None) -> str:
     not_set = get_text(user_id, "profile_not_set", user_code)
     cp_name = data.get("cp_name") or not_set
     nickname = data.get("game_nickname") or not_set
-    return get_text(user_id, "profile_title", user_code, cp_name=cp_name, nickname=nickname)
+    timezone = data.get("timezone") or not_set
+    return get_text(
+        user_id, "profile_title",
+        user_code,
+        cp_name=cp_name,
+        nickname=nickname,
+        timezone=timezone
+    )
 
 
 async def show_profile(message: types.Message, edit: bool = False):
